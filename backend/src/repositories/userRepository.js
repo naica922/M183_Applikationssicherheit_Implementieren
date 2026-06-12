@@ -10,3 +10,11 @@ export async function findById(id) {
   const result = await query('SELECT * FROM users WHERE id = $1', [id]);
   return result.rows[0] || null;
 }
+
+export async function createUser({ username, passwordHash }) {
+  const result = await query(
+    'INSERT INTO users (username, password_hash) VALUES ($1, $2) RETURNING *',
+    [username, passwordHash],
+  );
+  return result.rows[0];
+}
