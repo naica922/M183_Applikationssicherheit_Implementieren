@@ -86,4 +86,32 @@ Das Arbeitsjournal habe ich für mehr Struktur in einer separaten Datei geführt
 
 ### Projektstruktur
 
+```
+.
+├── backend/            Express-Backend (API, Auth, Verschlüsselung)
+│   └── src/
+│       ├── config/     Konfiguration (env, Datenbank)
+│       ├── middleware/ Express-Middleware (z.B. Fehler-Handling)
+│       └── routes/     API-Routen
+├── db/
+│   └── init/           SQL-Skripte für das Datenbankschema
+└── docker-compose.yml  PostgreSQL-Datenbank
+```
+
 ### Setup
+
+**Voraussetzungen:** Node.js (>= 20), Docker.
+
+1. Datenbank starten (PostgreSQL via Docker, Schema wird automatisch angelegt):
+   ```
+   docker-compose up -d
+   ```
+2. Backend einrichten und starten:
+   ```
+   cd backend
+   cp .env.example .env
+   npm install
+   npm run dev
+   ```
+3. Health-Check prüfen: [http://localhost:3000/api/health](http://localhost:3000/api/health)
+   gibt `{"status":"ok","db":"up"}` zurück, wenn alles läuft.
