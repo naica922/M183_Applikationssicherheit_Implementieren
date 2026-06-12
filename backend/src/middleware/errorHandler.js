@@ -1,15 +1,12 @@
 import { env } from '../config/env.js';
 
-// 404-Handler fuer unbekannte Routen.
 export function notFound(req, res, next) {
   res.status(404).json({ error: 'Not Found' });
 }
 
-// Zentraler Fehler-Handler. Gibt nach aussen keine internen Details preis.
+// Central error handler: never leak internals to the client.
 export function errorHandler(err, req, res, next) {
   const status = err.status || 500;
-
-  // Details nur im Log, nicht in der Response (keine Stacktraces an den Client).
   console.error(err);
 
   res.status(status).json({

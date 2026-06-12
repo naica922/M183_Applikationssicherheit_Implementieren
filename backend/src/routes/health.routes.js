@@ -3,7 +3,6 @@ import { pool } from '../config/db.js';
 
 const router = Router();
 
-// Einfacher Health-Check: lebt der Server und ist die DB erreichbar?
 router.get('/', async (req, res, next) => {
   try {
     await pool.query('SELECT 1');

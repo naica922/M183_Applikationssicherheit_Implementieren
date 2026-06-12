@@ -2,14 +2,13 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-// Pflicht-Variablen, ohne die der Server nicht sauber startet.
 const required = ['DB_HOST', 'DB_PORT', 'DB_NAME', 'DB_USER', 'DB_PASSWORD'];
 const missing = required.filter((key) => !process.env[key]);
 
+// Fail fast on missing config instead of breaking at runtime.
 if (missing.length > 0) {
-  // Fail-fast: lieber beim Start abbrechen als zur Laufzeit ueberraschen.
-  console.error(`Fehlende Umgebungsvariablen: ${missing.join(', ')}`);
-  console.error('Lege eine .env an (siehe .env.example).');
+  console.error(`Missing environment variables: ${missing.join(', ')}`);
+  console.error('Create a .env file (see .env.example).');
   process.exit(1);
 }
 
