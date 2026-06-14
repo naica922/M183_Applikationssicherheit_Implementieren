@@ -52,12 +52,12 @@ Optionale Stretch Ziele, falls die Zeit reicht.
 
 | Name | Beschreibung | Zeit (h) |
 | --- | --- | --- |
-| Projektplanung | Architektur planen und Technologien festlegen (Express + React + PostgreSQL). Datenbankstruktur und Sicherheitskonzept skizzieren. | 0.5 |
-| Projekt aufsetzen | Express-Backend und React-Frontend erstellen. Ordnerstruktur, Dependencies und .env-Secrets-Management einrichten. | 1 |
-| Datenbank aufsetzen | PostgreSQL installieren und konfigurieren. Tabellen für users, vault_entries, refresh_tokens und audit_log erstellen. | 1.5 |
-| User Entity & Repository | Datenmodell und Repository für den User erstellen. DB-Zugriff einrichten. | 1 |
-| Registrierung Backend | Register-Endpunkt mit Argon2-Hashing des Master-Passworts implementieren. Benutzername und Hash sicher in DB speichern. | 2 |
-| Login Backend | Login-Endpunkt implementieren und Master-Passwort mit Argon2 verifizieren. JWT Access- und Refresh-Token zurückgeben. | 2 |
+| ~~Projektplanung~~ | ~~Architektur planen und Technologien festlegen (Express + React + PostgreSQL). Datenbankstruktur und Sicherheitskonzept skizzieren.~~ | 0.5 |
+| ~~Projekt aufsetzen~~ | ~~Express-Backend und React-Frontend erstellen. Ordnerstruktur, Dependencies und .env-Secrets-Management einrichten.~~ | 1 |
+| ~~Datenbank aufsetzen~~ | ~~PostgreSQL installieren und konfigurieren. Tabellen für users, vault_entries, refresh_tokens und audit_log erstellen.~~ | 1.5 |
+| ~~User Entity & Repository~~ | ~~Datenmodell und Repository für den User erstellen. DB-Zugriff einrichten.~~ | 1 |
+| ~~Registrierung Backend~~ | ~~Register-Endpunkt mit Argon2-Hashing des Master-Passworts implementieren. Benutzername und Hash sicher in DB speichern.~~ | 2 |
+| ~~Login Backend~~ | ~~Login-Endpunkt implementieren und Master-Passwort mit Argon2 verifizieren. JWT Access- und Refresh-Token zurückgeben.~~ | 2 |
 | Refresh Token Rotation | Refresh-Endpunkt mit Token-Rotation und Invalidierung alter Tokens. Sichere Speicherung (HttpOnly Cookie). | 1.5 |
 | Zwei-Faktor-Authentifizierung | TOTP-basierte 2FA implementieren. Secret generieren, QR-Code bereitstellen und Code bei Login verifizieren. | 2 |
 | Rate Limiting & Account Lockout | Rate Limiting auf Auth-Endpunkten und Account Lockout nach fehlgeschlagenen Login-Versuchen. | 1.5 |
