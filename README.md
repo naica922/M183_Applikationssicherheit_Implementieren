@@ -50,6 +50,8 @@ Optionale Stretch Ziele, falls die Zeit reicht.
 
 ### Zeitplan
 
+Durchgestrichene Einträge sind bereits erledigt. Der ursprüngliche Plan ohne Markierungen: [ZEITPLAN.md](ZEITPLAN.md)
+
 | Name | Beschreibung | Zeit (h) |
 | --- | --- | --- |
 | ~~Projektplanung~~ | ~~Architektur planen und Technologien festlegen (Express + React + PostgreSQL). Datenbankstruktur und Sicherheitskonzept skizzieren.~~ | 0.5 |
