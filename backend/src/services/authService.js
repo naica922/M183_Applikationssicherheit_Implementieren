@@ -71,3 +71,13 @@ export async function refresh({ refreshToken, ipAddress, userAgent }) {
   await logEvent({ userId: user.id, eventType: 'token.refreshed', ipAddress, userAgent });
   return { accessToken, refreshToken: newRefresh.token };
 }
+
+export async function logout({ refreshToken, ipAddress, userAgent }) {
+  if (!refreshToken) return;
+
+  const stored = await findValidByHash(hashToken(refreshToken));
+  if (stored) {
+    await revokeById(stored.id);
+    await logEvent({ userId: stored.user_id, eventType: 'user.logout', ipAddress, userAgent });
+  }
+}
