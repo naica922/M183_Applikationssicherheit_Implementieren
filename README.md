@@ -58,7 +58,7 @@ Optionale Stretch Ziele, falls die Zeit reicht.
 | ~~User Entity & Repository~~ | ~~Datenmodell und Repository für den User erstellen. DB-Zugriff einrichten.~~ | 1 |
 | ~~Registrierung Backend~~ | ~~Register-Endpunkt mit Argon2-Hashing des Master-Passworts implementieren. Benutzername und Hash sicher in DB speichern.~~ | 2 |
 | ~~Login Backend~~ | ~~Login-Endpunkt implementieren und Master-Passwort mit Argon2 verifizieren. JWT Access- und Refresh-Token zurückgeben.~~ | 2 |
-| Refresh Token Rotation | Refresh-Endpunkt mit Token-Rotation und Invalidierung alter Tokens. Sichere Speicherung (HttpOnly Cookie). | 1.5 |
+| ~~Refresh Token Rotation~~ | ~~Refresh-Endpunkt mit Token-Rotation und Invalidierung alter Tokens. Sichere Speicherung (HttpOnly Cookie).~~ | 1.5 |
 | Zwei-Faktor-Authentifizierung | TOTP-basierte 2FA implementieren. Secret generieren, QR-Code bereitstellen und Code bei Login verifizieren. | 2 |
 | Rate Limiting & Account Lockout | Rate Limiting auf Auth-Endpunkten und Account Lockout nach fehlgeschlagenen Login-Versuchen. | 1.5 |
 | Verschlüsselung & Key Derivation | AES-256-GCM-Verschlüsselung implementieren. PBKDF2-Schlüsselableitung aus dem Master-Passwort. | 2 |
