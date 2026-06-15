@@ -9,6 +9,10 @@ export function signAccessToken(user) {
   });
 }
 
+export function verifyAccessToken(token) {
+  return jwt.verify(token, env.jwt.accessSecret);
+}
+
 // Refresh tokens are random and only their hash is stored, never the raw value.
 export function hashToken(token) {
   return crypto.createHash('sha256').update(token).digest('hex');

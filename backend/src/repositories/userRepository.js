@@ -18,3 +18,14 @@ export async function createUser({ username, passwordHash }) {
   );
   return result.rows[0];
 }
+
+export async function setTotpSecret(userId, secret) {
+  await query('UPDATE users SET totp_secret = $1, totp_enabled = false WHERE id = $2', [
+    secret,
+    userId,
+  ]);
+}
+
+export async function enableTotp(userId) {
+  await query('UPDATE users SET totp_enabled = true WHERE id = $1', [userId]);
+}

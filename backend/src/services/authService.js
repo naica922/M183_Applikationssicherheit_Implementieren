@@ -1,8 +1,15 @@
-import { createUser, findByUsername, findById } from '../repositories/userRepository.js';
+import {
+  createUser,
+  findByUsername,
+  findById,
+  setTotpSecret,
+  enableTotp,
+} from '../repositories/userRepository.js';
 import { findValidByHash, revokeById } from '../repositories/refreshTokenRepository.js';
 import { logEvent } from '../repositories/auditRepository.js';
 import { hashPassword, verifyPassword } from './passwordService.js';
 import { signAccessToken, issueRefreshToken, hashToken } from './tokenService.js';
+import { generateSecret, buildSetup, verifyToken } from './totpService.js';
 import { toPublicUser } from '../models/user.js';
 import { httpError } from '../utils/httpError.js';
 
@@ -24,7 +31,7 @@ export async function register({ username, password, ipAddress, userAgent }) {
   return toPublicUser(user);
 }
 
-export async function login({ username, password, ipAddress, userAgent }) {
+export async function login({ username, password, totpCode, ipAddress, userAgent }) {
   const user = await findByUsername(username);
   const passwordOk = user && (await verifyPassword(user.password_hash, password));
 
@@ -38,6 +45,16 @@ export async function login({ username, password, ipAddress, userAgent }) {
     });
     // Same response whether the user exists or not, to avoid enumeration.
     throw httpError(401, 'Invalid credentials.');
+  }
+
+  if (user.totp_enabled) {
+    if (!totpCode) {
+      throw httpError(401, 'TOTP code required.');
+    }
+    if (!verifyToken(user.totp_secret, totpCode)) {
+      await logEvent({ userId: user.id, eventType: 'user.login_failed', ipAddress, userAgent });
+      throw httpError(401, 'Invalid TOTP code.');
+    }
   }
 
   const accessToken = signAccessToken(user);
@@ -80,4 +97,30 @@ export async function logout({ refreshToken, ipAddress, userAgent }) {
     await revokeById(stored.id);
     await logEvent({ userId: stored.user_id, eventType: 'user.logout', ipAddress, userAgent });
   }
+}
+
+export async function setupTwoFactor(userId) {
+  const user = await findById(userId);
+  if (!user) {
+    throw httpError(404, 'User not found.');
+  }
+
+  // The secret is stored but 2FA stays disabled until the first code is verified.
+  const secret = generateSecret();
+  await setTotpSecret(userId, secret);
+  return buildSetup(user.username, secret);
+}
+
+export async function enableTwoFactor({ userId, totpCode, ipAddress, userAgent }) {
+  const user = await findById(userId);
+  if (!user?.totp_secret) {
+    throw httpError(400, 'Set up 2FA first.');
+  }
+
+  if (!verifyToken(user.totp_secret, totpCode)) {
+    throw httpError(401, 'Invalid TOTP code.');
+  }
+
+  await enableTotp(userId);
+  await logEvent({ userId, eventType: '2fa.enabled', ipAddress, userAgent });
 }

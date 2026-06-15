@@ -48,6 +48,7 @@ export async function login(req, res, next) {
     const { user, accessToken, refreshToken } = await authService.login({
       username: value.username,
       password: value.password,
+      totpCode: req.body?.totpCode,
       ipAddress: req.ip,
       userAgent: req.headers['user-agent'] || null,
     });
@@ -84,6 +85,34 @@ export async function logout(req, res, next) {
 
     clearRefreshCookie(res);
     res.status(204).end();
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function setupTwoFactor(req, res, next) {
+  try {
+    const setup = await authService.setupTwoFactor(req.user.id);
+    res.json(setup);
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function enableTwoFactor(req, res, next) {
+  try {
+    if (!req.body?.totpCode) {
+      return res.status(400).json({ error: 'TOTP code is required.' });
+    }
+
+    await authService.enableTwoFactor({
+      userId: req.user.id,
+      totpCode: req.body.totpCode,
+      ipAddress: req.ip,
+      userAgent: req.headers['user-agent'] || null,
+    });
+
+    res.json({ message: '2FA enabled.' });
   } catch (err) {
     next(err);
   }
