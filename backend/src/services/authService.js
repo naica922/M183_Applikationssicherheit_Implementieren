@@ -1,7 +1,8 @@
-import { createUser, findByUsername } from '../repositories/userRepository.js';
+import { createUser, findByUsername, findById } from '../repositories/userRepository.js';
+import { findValidByHash, revokeById } from '../repositories/refreshTokenRepository.js';
 import { logEvent } from '../repositories/auditRepository.js';
 import { hashPassword, verifyPassword } from './passwordService.js';
-import { signAccessToken, issueRefreshToken } from './tokenService.js';
+import { signAccessToken, issueRefreshToken, hashToken } from './tokenService.js';
 import { toPublicUser } from '../models/user.js';
 import { httpError } from '../utils/httpError.js';
 
@@ -44,4 +45,29 @@ export async function login({ username, password, ipAddress, userAgent }) {
 
   await logEvent({ userId: user.id, eventType: 'user.login_success', ipAddress, userAgent });
   return { user: toPublicUser(user), accessToken, refreshToken: refresh.token };
+}
+
+export async function refresh({ refreshToken, ipAddress, userAgent }) {
+  if (!refreshToken) {
+    throw httpError(401, 'Missing refresh token.');
+  }
+
+  const stored = await findValidByHash(hashToken(refreshToken));
+  if (!stored) {
+    throw httpError(401, 'Invalid refresh token.');
+  }
+
+  // Rotation: the used token is revoked and replaced with a new one.
+  await revokeById(stored.id);
+
+  const user = await findById(stored.user_id);
+  if (!user) {
+    throw httpError(401, 'Invalid refresh token.');
+  }
+
+  const accessToken = signAccessToken(user);
+  const newRefresh = await issueRefreshToken(user.id);
+
+  await logEvent({ userId: user.id, eventType: 'token.refreshed', ipAddress, userAgent });
+  return { accessToken, refreshToken: newRefresh.token };
 }
