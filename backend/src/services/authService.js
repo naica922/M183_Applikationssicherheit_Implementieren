@@ -31,7 +31,7 @@ export async function register({ username, password, ipAddress, userAgent }) {
   return toPublicUser(user);
 }
 
-export async function login({ username, password, ipAddress, userAgent }) {
+export async function login({ username, password, totpCode, ipAddress, userAgent }) {
   const user = await findByUsername(username);
   const passwordOk = user && (await verifyPassword(user.password_hash, password));
 
@@ -45,6 +45,16 @@ export async function login({ username, password, ipAddress, userAgent }) {
     });
     // Same response whether the user exists or not, to avoid enumeration.
     throw httpError(401, 'Invalid credentials.');
+  }
+
+  if (user.totp_enabled) {
+    if (!totpCode) {
+      throw httpError(401, 'TOTP code required.');
+    }
+    if (!verifyToken(user.totp_secret, totpCode)) {
+      await logEvent({ userId: user.id, eventType: 'user.login_failed', ipAddress, userAgent });
+      throw httpError(401, 'Invalid TOTP code.');
+    }
   }
 
   const accessToken = signAccessToken(user);
