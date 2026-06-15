@@ -86,6 +86,10 @@ SecurePass orientiert sich an den OWASP Top 10. Ich achte in meinem Projekt auf 
 
 Das Arbeitsjournal habe ich für mehr Struktur in einer separaten Datei geführt: [ARBEITSJOURNAL.md](ARBEITSJOURNAL.md)
 
+### Wissenssammlung
+
+Kurze Erklärungen der wichtigsten Fachbegriffe und Technologien: [WISSENSSAMMLUNG.md](WISSENSSAMMLUNG.md)
+
 ### Projektstruktur
 
 ```
