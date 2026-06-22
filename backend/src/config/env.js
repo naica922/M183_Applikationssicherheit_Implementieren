@@ -37,4 +37,8 @@ export const env = {
     accessTtl: process.env.JWT_ACCESS_TTL || '15m',
     refreshTtlDays: Number(process.env.JWT_REFRESH_TTL_DAYS) || 7,
   },
+  security: {
+    maxFailedAttempts: Number(process.env.MAX_FAILED_ATTEMPTS) || 5,
+    lockoutMinutes: Number(process.env.LOCKOUT_MINUTES) || 15,
+  },
 };

@@ -29,3 +29,25 @@ export async function setTotpSecret(userId, secret) {
 export async function enableTotp(userId) {
   await query('UPDATE users SET totp_enabled = true WHERE id = $1', [userId]);
 }
+
+// Counts a failed login and returns the new attempt total.
+export async function incrementFailedAttempts(userId) {
+  const result = await query(
+    `UPDATE users SET failed_login_attempts = failed_login_attempts + 1
+     WHERE id = $1 RETURNING failed_login_attempts`,
+    [userId],
+  );
+  return result.rows[0]?.failed_login_attempts ?? 0;
+}
+
+export async function lockAccount(userId, lockedUntil) {
+  await query('UPDATE users SET locked_until = $1 WHERE id = $2', [lockedUntil, userId]);
+}
+
+// Clears the lockout state after a successful login.
+export async function resetFailedAttempts(userId) {
+  await query(
+    'UPDATE users SET failed_login_attempts = 0, locked_until = NULL WHERE id = $1',
+    [userId],
+  );
+}
