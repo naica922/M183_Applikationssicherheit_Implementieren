@@ -10,6 +10,8 @@ const required = [
   'DB_PASSWORD',
   'JWT_ACCESS_SECRET',
   'JWT_REFRESH_SECRET',
+  'VAULT_MASTER_KEY',
+  'VAULT_KEY_SALT',
 ];
 const missing = required.filter((key) => !process.env[key]);
 
@@ -40,5 +42,9 @@ export const env = {
   security: {
     maxFailedAttempts: Number(process.env.MAX_FAILED_ATTEMPTS) || 5,
     lockoutMinutes: Number(process.env.LOCKOUT_MINUTES) || 15,
+  },
+  crypto: {
+    masterKey: process.env.VAULT_MASTER_KEY,
+    keySalt: process.env.VAULT_KEY_SALT,
   },
 };
