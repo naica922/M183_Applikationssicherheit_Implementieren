@@ -4,6 +4,9 @@ import {
   findById,
   setTotpSecret,
   enableTotp,
+  incrementFailedAttempts,
+  lockAccount,
+  resetFailedAttempts,
 } from '../repositories/userRepository.js';
 import { findValidByHash, revokeById } from '../repositories/refreshTokenRepository.js';
 import { logEvent } from '../repositories/auditRepository.js';
@@ -12,6 +15,22 @@ import { signAccessToken, issueRefreshToken, hashToken } from './tokenService.js
 import { generateSecret, buildSetup, verifyToken } from './totpService.js';
 import { toPublicUser } from '../models/user.js';
 import { httpError } from '../utils/httpError.js';
+import { env } from '../config/env.js';
+
+function isLocked(user) {
+  return Boolean(user?.locked_until) && new Date(user.locked_until) > new Date();
+}
+
+// Counts a failed attempt and locks the account once the threshold is reached.
+async function registerFailedAttempt({ user, ipAddress, userAgent }) {
+  if (!user) return;
+  const attempts = await incrementFailedAttempts(user.id);
+  if (attempts >= env.security.maxFailedAttempts) {
+    const lockedUntil = new Date(Date.now() + env.security.lockoutMinutes * 60 * 1000);
+    await lockAccount(user.id, lockedUntil);
+    await logEvent({ userId: user.id, eventType: 'user.account_locked', ipAddress, userAgent });
+  }
+}
 
 export async function register({ username, password, ipAddress, userAgent }) {
   const passwordHash = await hashPassword(password);
@@ -33,9 +52,18 @@ export async function register({ username, password, ipAddress, userAgent }) {
 
 export async function login({ username, password, totpCode, ipAddress, userAgent }) {
   const user = await findByUsername(username);
+
+  // Reject early while the account is locked, without revealing whether the
+  // password was correct.
+  if (isLocked(user)) {
+    await logEvent({ userId: user.id, eventType: 'user.login_locked', ipAddress, userAgent });
+    throw httpError(423, 'Account temporarily locked. Please try again later.');
+  }
+
   const passwordOk = user && (await verifyPassword(user.password_hash, password));
 
   if (!passwordOk) {
+    await registerFailedAttempt({ user, ipAddress, userAgent });
     await logEvent({
       userId: user?.id || null,
       eventType: 'user.login_failed',
@@ -52,10 +80,14 @@ export async function login({ username, password, totpCode, ipAddress, userAgent
       throw httpError(401, 'TOTP code required.');
     }
     if (!verifyToken(user.totp_secret, totpCode)) {
+      await registerFailedAttempt({ user, ipAddress, userAgent });
       await logEvent({ userId: user.id, eventType: 'user.login_failed', ipAddress, userAgent });
       throw httpError(401, 'Invalid TOTP code.');
     }
   }
+
+  // Successful login clears any earlier failed attempts and lockout.
+  await resetFailedAttempts(user.id);
 
   const accessToken = signAccessToken(user);
   const refresh = await issueRefreshToken(user.id);
