@@ -9,13 +9,15 @@ import {
 } from '../controllers/authController.js';
 import { requireAuth } from '../middleware/requireAuth.js';
 import { authLimiter } from '../middleware/rateLimiters.js';
+import { requireCsrf } from '../middleware/csrf.js';
 
 const router = Router();
 
 router.post('/register', authLimiter, register);
 router.post('/login', authLimiter, login);
-router.post('/refresh', refresh);
-router.post('/logout', logout);
+// Cookie-authenticated endpoints are protected against CSRF.
+router.post('/refresh', requireCsrf, refresh);
+router.post('/logout', requireCsrf, logout);
 router.post('/2fa/setup', requireAuth, setupTwoFactor);
 router.post('/2fa/enable', requireAuth, enableTwoFactor);
 

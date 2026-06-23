@@ -1,6 +1,7 @@
 import { validateRegister, validateLogin } from '../validators/authValidator.js';
 import * as authService from '../services/authService.js';
 import { env } from '../config/env.js';
+import { issueCsrfToken, clearCsrfToken } from '../middleware/csrf.js';
 
 const REFRESH_COOKIE_PATH = '/api/auth';
 
@@ -54,6 +55,7 @@ export async function login(req, res, next) {
     });
 
     setRefreshCookie(res, refreshToken);
+    issueCsrfToken(res);
     res.json({ user, accessToken });
   } catch (err) {
     next(err);
@@ -69,6 +71,7 @@ export async function refresh(req, res, next) {
     });
 
     setRefreshCookie(res, refreshToken);
+    issueCsrfToken(res);
     res.json({ accessToken });
   } catch (err) {
     next(err);
@@ -84,6 +87,7 @@ export async function logout(req, res, next) {
     });
 
     clearRefreshCookie(res);
+    clearCsrfToken(res);
     res.status(204).end();
   } catch (err) {
     next(err);
