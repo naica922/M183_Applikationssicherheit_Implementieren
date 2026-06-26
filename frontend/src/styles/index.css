@@ -151,3 +151,22 @@ a {
   color: var(--text);
   font-size: 0.9rem;
 }
+
+.twofa {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-width: 360px;
+}
+
+.qr {
+  width: 200px;
+  height: 200px;
+  background: white;
+  padding: 8px;
+  border-radius: 8px;
+}
+
+.ok {
+  color: #86efac;
+}
