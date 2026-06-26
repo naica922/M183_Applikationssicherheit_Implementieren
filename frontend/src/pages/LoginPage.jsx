@@ -7,6 +7,8 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [totpCode, setTotpCode] = useState('');
+  const [totpRequired, setTotpRequired] = useState(false);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
 
@@ -15,10 +17,16 @@ export default function LoginPage() {
     setError('');
     setBusy(true);
     try {
-      await login(username, password);
+      await login(username, password, totpRequired ? totpCode : undefined);
       navigate('/');
     } catch (err) {
-      setError(err.message);
+      // The backend signals a missing/invalid second factor via the message.
+      if (/totp/i.test(err.message)) {
+        setTotpRequired(true);
+        setError(totpRequired ? 'Invalid code. Please try again.' : '');
+      } else {
+        setError(err.message);
+      }
     } finally {
       setBusy(false);
     }
@@ -50,6 +58,22 @@ export default function LoginPage() {
           autoComplete="current-password"
           required
         />
+
+        {totpRequired && (
+          <>
+            <label htmlFor="totp">Authenticator code</label>
+            <input
+              id="totp"
+              value={totpCode}
+              onChange={(e) => setTotpCode(e.target.value)}
+              inputMode="numeric"
+              maxLength={6}
+              placeholder="123456"
+              autoFocus
+              required
+            />
+          </>
+        )}
 
         <button type="submit" disabled={busy}>
           {busy ? 'Logging in…' : 'Log in'}

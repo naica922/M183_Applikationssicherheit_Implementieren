@@ -72,6 +72,14 @@ export function login(username, password, totpCode) {
   return request('/auth/login', { method: 'POST', body: { username, password, totpCode } });
 }
 
+export function setupTwoFactor() {
+  return authedRequest('/auth/2fa/setup', { method: 'POST' });
+}
+
+export function enableTwoFactor(totpCode) {
+  return authedRequest('/auth/2fa/enable', { method: 'POST', body: { totpCode } });
+}
+
 export function refresh() {
   return request('/auth/refresh', { method: 'POST', csrf: true });
 }
