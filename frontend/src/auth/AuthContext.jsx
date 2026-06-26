@@ -1,10 +1,27 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import * as api from '../api/client.js';
+import { decodeUserFromToken } from './jwt.js';
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
+  const [ready, setReady] = useState(false);
+
+  // On load, try to restore the session from the refresh-token cookie so a page
+  // reload does not log the user out.
+  useEffect(() => {
+    api
+      .refresh()
+      .then((data) => {
+        api.setAccessToken(data.accessToken);
+        setUser(decodeUserFromToken(data.accessToken));
+      })
+      .catch(() => {
+        // No valid session – stay logged out.
+      })
+      .finally(() => setReady(true));
+  }, []);
 
   async function register(username, password) {
     return api.register(username, password);
@@ -28,7 +45,7 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, setUser, register, login, logout }}>
+    <AuthContext.Provider value={{ user, setUser, ready, register, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
