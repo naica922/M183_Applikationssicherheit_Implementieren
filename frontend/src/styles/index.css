@@ -104,3 +104,50 @@ a {
   margin: 0 auto;
   padding: 2rem 1rem;
 }
+
+.loading {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+}
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.9rem 1.5rem;
+  background: var(--card);
+  border-bottom: 1px solid #334155;
+}
+
+.brand {
+  font-weight: 700;
+  font-size: 1.1rem;
+  text-decoration: none;
+  color: var(--text);
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+.nav-links a {
+  text-decoration: none;
+}
+
+.nav-user {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.link-button {
+  margin: 0;
+  padding: 0.4rem 0.8rem;
+  background: transparent;
+  border: 1px solid #334155;
+  color: var(--text);
+  font-size: 0.9rem;
+}

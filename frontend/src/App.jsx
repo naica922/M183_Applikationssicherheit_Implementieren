@@ -2,17 +2,34 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './pages/LoginPage.jsx';
 import RegisterPage from './pages/RegisterPage.jsx';
 import DashboardPage from './pages/DashboardPage.jsx';
+import Layout from './components/Layout.jsx';
 import { useAuth } from './auth/AuthContext.jsx';
 
 export default function App() {
-  const { user } = useAuth();
+  const { user, ready } = useAuth();
+
+  // Wait for the silent refresh to settle so a reload does not flash the login
+  // page for an already-authenticated user.
+  if (!ready) {
+    return <div className="loading">Loading…</div>;
+  }
+
+  if (!user) {
+    return (
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="*" element={<Navigate to="/login" replace />} />
+      </Routes>
+    );
+  }
 
   return (
-    <Routes>
-      <Route path="/login" element={user ? <Navigate to="/" replace /> : <LoginPage />} />
-      <Route path="/register" element={user ? <Navigate to="/" replace /> : <RegisterPage />} />
-      <Route path="/" element={user ? <DashboardPage /> : <Navigate to="/login" replace />} />
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+    <Layout>
+      <Routes>
+        <Route path="/" element={<DashboardPage />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </Layout>
   );
 }
