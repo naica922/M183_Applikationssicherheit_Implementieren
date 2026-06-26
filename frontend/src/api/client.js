@@ -49,6 +49,21 @@ async function request(path, { method = 'GET', body, auth = false, csrf = false 
   return data;
 }
 
+// Authenticated request that transparently refreshes the access token once on a
+// 401 (e.g. after it expired) and then retries.
+export async function authedRequest(path, opts = {}) {
+  try {
+    return await request(path, { ...opts, auth: true });
+  } catch (err) {
+    if (err.status === 401) {
+      const data = await refresh();
+      setAccessToken(data.accessToken);
+      return request(path, { ...opts, auth: true });
+    }
+    throw err;
+  }
+}
+
 export function register(username, password) {
   return request('/auth/register', { method: 'POST', body: { username, password } });
 }
