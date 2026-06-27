@@ -80,6 +80,26 @@ export function enableTwoFactor(totpCode) {
   return authedRequest('/auth/2fa/enable', { method: 'POST', body: { totpCode } });
 }
 
+export function listVault() {
+  return authedRequest('/vault');
+}
+
+export function getVaultEntry(id) {
+  return authedRequest(`/vault/${id}`);
+}
+
+export function createVaultEntry(entry) {
+  return authedRequest('/vault', { method: 'POST', body: entry });
+}
+
+export function updateVaultEntry(id, entry) {
+  return authedRequest(`/vault/${id}`, { method: 'PUT', body: entry });
+}
+
+export function deleteVaultEntry(id) {
+  return authedRequest(`/vault/${id}`, { method: 'DELETE' });
+}
+
 export function refresh() {
   return request('/auth/refresh', { method: 'POST', csrf: true });
 }
