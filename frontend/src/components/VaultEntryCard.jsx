@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import * as api from '../api/client.js';
 
-export default function VaultEntryCard({ entry, onDelete }) {
+export default function VaultEntryCard({ entry, onEdit, onDelete }) {
   const [password, setPassword] = useState(null);
   const [busy, setBusy] = useState(false);
 
@@ -41,6 +41,9 @@ export default function VaultEntryCard({ entry, onDelete }) {
             Copy
           </button>
         )}
+        <button type="button" className="link-button" onClick={() => onEdit(entry)}>
+          Edit
+        </button>
         <button type="button" className="link-button danger" onClick={() => onDelete(entry.id)}>
           Delete
         </button>
