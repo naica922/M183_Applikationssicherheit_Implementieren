@@ -1,7 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './pages/LoginPage.jsx';
 import RegisterPage from './pages/RegisterPage.jsx';
-import DashboardPage from './pages/DashboardPage.jsx';
+import VaultPage from './pages/VaultPage.jsx';
 import TwoFactorPage from './pages/TwoFactorPage.jsx';
 import Layout from './components/Layout.jsx';
 import { useAuth } from './auth/AuthContext.jsx';
@@ -28,7 +28,7 @@ export default function App() {
   return (
     <Layout>
       <Routes>
-        <Route path="/" element={<DashboardPage />} />
+        <Route path="/" element={<VaultPage />} />
         <Route path="/settings/2fa" element={<TwoFactorPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
