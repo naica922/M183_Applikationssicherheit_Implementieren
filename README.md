@@ -94,14 +94,27 @@ Kurze Erklärungen der wichtigsten Fachbegriffe und Technologien: [WISSENSSAMMLU
 
 ```
 .
-├── backend/            Express-Backend (API, Auth, Verschlüsselung)
+├── backend/             Express-Backend (API, Auth, Verschlüsselung)
 │   └── src/
-│       ├── config/     Konfiguration (env, Datenbank)
-│       ├── middleware/ Express-Middleware (z.B. Fehler-Handling)
-│       └── routes/     API-Routen
+│       ├── config/      Konfiguration (env, Datenbank)
+│       ├── controllers/ Request-Handler
+│       ├── middleware/  Express-Middleware (Auth, CSRF, Rate Limiting, Fehler)
+│       ├── models/      Mapping von DB-Zeilen auf sichere Objekte
+│       ├── repositories/ Datenbankzugriff (parametrisierte Queries)
+│       ├── routes/      API-Routen
+│       ├── services/    Geschäftslogik (Auth, Krypto, TOTP, Vault)
+│       └── validators/  Serverseitige Eingabevalidierung
+├── frontend/            React-Frontend (Vite)
+│   └── src/
+│       ├── api/         API-Client (fetch-Wrapper)
+│       ├── auth/        Auth-Context und Session-Handling
+│       ├── components/  Wiederverwendbare UI-Komponenten
+│       ├── pages/       Seiten (Login, Register, Vault, 2FA)
+│       └── utils/       Hilfsfunktionen (Passwort-Generator)
 ├── db/
-│   └── init/           SQL-Skripte für das Datenbankschema
-└── docker-compose.yml  PostgreSQL-Datenbank
+│   └── init/            SQL-Skripte für das Datenbankschema
+├── .github/workflows/   CI-Pipeline (npm audit, Build)
+└── docker-compose.yml   PostgreSQL-Datenbank
 ```
 
 ### Setup
@@ -121,3 +134,13 @@ Kurze Erklärungen der wichtigsten Fachbegriffe und Technologien: [WISSENSSAMMLU
    ```
 3. Health-Check prüfen: [http://localhost:3000/api/health](http://localhost:3000/api/health)
    gibt `{"status":"ok","db":"up"}` zurück, wenn alles läuft.
+4. Frontend einrichten und starten (in einem zweiten Terminal):
+   ```
+   cd frontend
+   cp .env.example .env
+   npm install
+   npm run dev
+   ```
+   Die App ist danach unter [http://localhost:5173](http://localhost:5173) erreichbar.
+
+Zum Testen der API mit Postman siehe [TESTING.md](TESTING.md).
