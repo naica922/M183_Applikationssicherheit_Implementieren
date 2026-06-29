@@ -144,3 +144,34 @@ Kurze Erklärungen der wichtigsten Fachbegriffe und Technologien: [WISSENSSAMMLU
    Die App ist danach unter [http://localhost:5173](http://localhost:5173) erreichbar.
 
 Zum Testen der API mit Postman siehe [TESTING.md](TESTING.md).
+
+### Anwendung
+
+Ein kurzer Überblick über die wichtigsten Ansichten von SecurePass.
+
+**Registrierung & Login**
+
+Beim Login wird das Master-Passwort verlangt; ist 2FA aktiviert, zusätzlich ein TOTP-Code.
+
+| Login | Registrierung |
+| --- | --- |
+| ![Login](docs/screenshots/01-login.png) | ![Registrierung](docs/screenshots/02-register.png) |
+
+**Vault**
+
+Die Übersicht zeigt alle gespeicherten Einträge. Passwörter werden nur auf Klick
+entschlüsselt angezeigt. Neue Einträge lassen sich mit einem sicheren
+Passwort-Generator anlegen.
+
+| Leerer Vault | Eintrag erstellen |
+| --- | --- |
+| ![Leerer Vault](docs/screenshots/03-vault-empty.png) | ![Eintrag erstellen](docs/screenshots/04-entry-form.png) |
+
+![Vault-Übersicht](docs/screenshots/05-vault-list.png)
+
+**Zwei-Faktor-Authentifizierung**
+
+Der QR-Code wird mit einer Authenticator-App (z.B. Google Authenticator)
+gescannt und anschliessend mit einem Code bestätigt.
+
+![2FA-Setup](docs/screenshots/06-2fa-setup.png)
